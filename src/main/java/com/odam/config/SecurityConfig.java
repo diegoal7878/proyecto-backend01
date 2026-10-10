@@ -2,11 +2,13 @@ package com.odam.config;
 
 import com.odam.security.JwtAuthenticationFilter;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,9 +25,14 @@ import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwt;
+
+    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}")
+    private List<String> allowedOrigins;
+
 
     public SecurityConfig(JwtAuthenticationFilter jwt) {
         this.jwt = jwt;
@@ -95,9 +102,14 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(
-            List.of("http://localhost:5173")
-        );
+        config.setAllowedOrigins(allowedOrigins);
+
+//        config.setAllowedOrigins(
+//            List.of(
+//                "",
+//                "http://localhost:5173"
+//            )
+//        );
 
         config.setAllowedMethods(
             List.of(
